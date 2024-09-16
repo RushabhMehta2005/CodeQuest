@@ -1,0 +1,23 @@
+#problem-btn, #editorial-btn, #submissions-btn {
+    transition: background-color 0.2s ease-in-out;
+}
+
+#problem-btn:hover {
+    background-color: #4b0082;
+}
+
+#editorial-btn, #home-btn {
+    background-color: #f39c12;
+    color: white;
+}
+
+#editorial-btn:hover, #home-btn:hover {
+    background-color: #d35400;
+}
+
+#home-btn a {
+    text-decoration: none;
+}
+#submissions-btn:hover {
+    background-color: #4b0082;
+}
