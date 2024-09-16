@@ -1,0 +1,65 @@
+{% extends "custom_auth/base.html" %}
+
+{% block title %}Problems by Tag{% endblock %}
+
+{% block content %}
+    <div class="container mx-auto p-6 bg-white shadow-md rounded-lg">
+        <h1 class="text-3xl font-bold mb-6">Problems by Tag: {{ tag.name }}</h1>
+
+        <div class="flex space-x-8">
+            <!-- Left Section: Problems Solved by Tag -->
+            <div class="flex-1 bg-gray-100 p-4 rounded-lg shadow-sm">
+                <h2 class="text-2xl font-semibold mb-4">Progress by Difficulty</h2>
+
+                <!-- Easy Difficulty -->
+                <div class="mb-4">
+                    <p class="text-lg font-medium text-gray-700">Easy</p>
+                    <div class="bg-gray-200 rounded-full h-6 w-full mb-2">
+                        <div class="h-full rounded-full"
+                             style="width: {{ easy_percentage|floatformat:0 }}%; background-color: rgb(168, 85, 247);">
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600">Solved: {{ solved_easy }} / {{ total_easy }}</p>
+                </div>
+
+                <!-- Medium Difficulty -->
+                <div class="mb-4">
+                    <p class="text-lg font-medium text-gray-700">Medium</p>
+                    <div class="bg-gray-200 rounded-full h-6 w-full mb-2">
+                        <div class="h-full rounded-full"
+                             style="width: {{ medium_percentage|floatformat:0 }}%; background-color: rgb(249, 115, 22);">
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600">Solved: {{ solved_medium }} / {{ total_medium }}</p>
+                </div>
+
+                <!-- Difficult Difficulty -->
+                <div class="mb-4">
+                    <p class="text-lg font-medium text-gray-700">Hard</p>
+                    <div class="bg-gray-200 rounded-full h-6 w-full mb-2">
+                        <div class="h-full rounded-full"
+                             style="width: {{ difficult_percentage|floatformat:0 }}%; background-color: rgb(239, 68, 68);">
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600">Solved: {{ solved_difficult }} / {{ total_difficult }}</p>
+                </div>
+            </div>
+
+            <!-- Right Section: List of Problems -->
+            <div class="flex-1 bg-gray-100 p-4 rounded-lg shadow-sm">
+                <h2 class="text-2xl font-semibold mb-4">List of Problems</h2>
+                <ul>
+                    {% for problem in problems %}
+                        <li class="mb-2">
+                            <a href="{% url 'Quest:problem_submit' problem.id %}" class="text-purple-600 hover:underline">{{ problem.title }}</a>
+                        </li>
+                    {% empty %}
+                        <li class="text-gray-600">No problems available.</li>
+                    {% endfor %}
+
+                    <a href="{% url 'Quest:home' %}" class="text-purple-900 font-bold hover:underline">Go to Dashboard</a>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

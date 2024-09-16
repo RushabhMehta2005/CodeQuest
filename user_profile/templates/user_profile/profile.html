@@ -1,0 +1,57 @@
+{% extends 'custom_auth/base.html' %}
+
+{% block title %}Your Profile - CodeQuest{% endblock %}
+
+{% block content %}
+    <div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
+        <div class="flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-purple-700">Your Profile</h1>
+            <div>
+                <a href="{% url 'custom_auth:edit_password' %}" class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-500">Edit Password</a>
+                <a href="/" class="ml-2 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-500">Back to Dashboard</a>
+            </div>
+        </div>
+
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800">Number of Solved Problems:</h3>
+                <p class="text-2xl font-bold text-green-600">{{ solved_problems_count }}</p>
+            </div>
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800">Number of Submissions:</h3>
+                <p class="text-2xl font-bold text-blue-600">{{ submissions_count }}</p>
+            </div>
+        </div>
+
+        <div class="mt-6">
+            <h3 class="text-lg font-semibold text-gray-800">Topics Most Skilled In:</h3>
+            <div class="flex flex-wrap mt-2">
+                {% for tag in skilled_topics %}
+                    <a href="{% url 'Quest:problems_by_tag' tag.id %}">
+                        <span class="bg-purple-200 text-purple-800 text-sm font-medium mr-2 mb-2 px-3 py-1 rounded-full hover:bg-purple-300 transition duration-200">
+                            {{ tag.name }}
+                        </span>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="mt-6">
+            <h3 class="text-lg font-semibold text-gray-800">Recent Submissions:</h3>
+            <ul class="mt-2 space-y-4">
+                {% for submission in recent_submissions %}
+                <li class="bg-gray-100 px-4 py-2 rounded-md flex justify-between items-center">
+                    <a href="{% url 'Quest:problem_submit' submission.problem.id %}" class="text-purple-600 hover:underline">{{ submission.problem.title }}</a>
+                    
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-600">{{ submission.submitted_at }}</span>
+                        <span class="px-2 py-1 {% if submission.correct %}bg-green-400{% else %}bg-red-400{% endif %} text-white rounded-full">
+                            {% if submission.correct %}Correct{% else %}Incorrect{% endif %}
+                        </span>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends 'custom_auth/base.html' %}
+
+{% block title %}Dashboard - CodeQuest{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <form method="GET" action="{% url 'Quest:home' %}" class="mb-4 flex flex-wrap items-center justify-between space-y-4">
+        <div class="w-full sm:w-1/3">
+            <label for="query" class="block text-sm font-bold text-black-600">Search Problems</label>
+            <input type="text" name="query" id="query" class="w-full p-2 bg-gray-800 text-white rounded-md border border-gray-600 focus:outline-none focus:border-blue-500" value="{{ query }}" placeholder="Search by title or description">
+        </div>
+
+        <div class="w-full sm:w-1/4">
+            <label for="difficulty" class="block text-sm font-bold text-black-600">Difficulty</label>
+            <select name="difficulty" id="difficulty" class="w-full p-2 bg-gray-800 text-white rounded-md border border-gray-600 focus:outline-none focus:border-blue-500">
+                <option value="">All</option>
+                <option value="1" {% if selected_difficulty == "1" %}selected{% endif %}>Easy</option>
+                <option value="2" {% if selected_difficulty == "2" %}selected{% endif %}>Medium</option>
+                <option value="3" {% if selected_difficulty == "3" %}selected{% endif %}>Hard</option>
+            </select>
+        </div>
+
+        <div class="w-full sm:w-1/3 relative">
+            <label class="block text-sm font-bold text-black-600">Tags</label>
+            <div id="tagContainer" class="flex flex-wrap gap-2 max-h-10 overflow-hidden transition-all duration-500 ease-in-out">
+                {% for tag in all_tags %}
+                    <div class="flex items-center">
+                        <input type="checkbox" name="tags" value="{{ tag.id }}" id="tag-{{ tag.id }}" 
+                               {% if tag.id|stringformat:"s" in selected_tags %}checked{% endif %}>
+                        <label for="tag-{{ tag.id }}" class="ml-2 text-sm text-white bg-gray-800 px-3 py-1 rounded-full border border-gray-600">{{ tag.name }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="button" id="toggleTags" class="text-sm font-bold text-black-600 mt-2">Expand</button>
+        </div>
+
+        <div class="w-full flex justify-between mt-4">
+            <button type="submit" class="px-6 py-2 bg-purple-800 text-white rounded-md hover:bg-orange-700 focus:outline-none shadow-md transition-all duration-200 ease-in-out">
+                Apply Filters
+            </button>
+            
+            <a href="{% url 'Quest:home' %}" class="px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none shadow-md transition-all duration-200 ease-in-out">
+                Remove Filters
+            </a>
+        </div>
+
+    </form>
+
+    <!-- Problems List -->
+    <div class="card shadow-lg p-4 bg-gray-800 text-white rounded-lg">
+        <h3 class="text-lg font-bold mb-4 border-b-2 border-gray-600 pb-2">All Problems</h3>
+        <ul class="divide-y divide-gray-700">
+            {% if page_obj.object_list %}
+                {% for problem in page_obj.object_list %}
+                    <li class="py-2">
+                        <a href="{% url 'Quest:problem_submit' problem.id %}" class="text-blue-400 hover:text-blue-300">
+                            {{ problem.title }}
+                        </a>
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li class="py-2 text-gray-400">No problems found matching the criteria.</li>
+            {% endif %}
+        </ul>
+
+        <div class="flex justify-between items-center mt-4 space-x-4">
+            {% if page_obj.has_previous %}
+                <a href="?{% if query %}query={{ query }}&{% endif %}{% if selected_difficulty %}difficulty={{ selected_difficulty }}&{% endif %}{% for tag in selected_tags %}tags={{ tag }}&{% endfor %}page={{ page_obj.previous_page_number }}" class="px-4 py-2 bg-purple-800 text-white rounded-lg hover:bg-purple-700 transition-shadow duration-200 ease-in-out shadow-md hover:shadow-lg">
+                    <i class="fas fa-arrow-left"></i> Previous
+                </a>
+            {% else %}
+                <span class="px-4 py-2 bg-gray-500 text-white rounded-lg cursor-not-allowed">
+                    <i class="fas fa-arrow-left"></i> Previous
+                </span>
+            {% endif %}
+        
+            <div class="text-white font-semibold">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </div>
+        
+            {% if page_obj.has_next %}
+                <a href="?{% if query %}query={{ query }}&{% endif %}{% if selected_difficulty %}difficulty={{ selected_difficulty }}&{% endif %}{% for tag in selected_tags %}tags={{ tag }}&{% endfor %}page={{ page_obj.next_page_number }}" class="px-4 py-2 bg-purple-800 text-white rounded-lg hover:bg-purple-700 transition-shadow duration-200 ease-in-out shadow-md hover:shadow-lg">
+                    Next <i class="fas fa-arrow-right"></i>
+                </a>
+            {% else %}
+                <span class="px-4 py-2 bg-gray-500 text-white rounded-lg cursor-not-allowed">
+                    Next <i class="fas fa-arrow-right"></i>
+                </span>
+            {% endif %}
+        </div>
+        
+
+</div>
+
+<script>
+    const toggleButton = document.getElementById('toggleTags');
+    const tagContainer = document.getElementById('tagContainer');
+    let expanded = false;
+
+    toggleButton.addEventListener('click', () => {
+        if (expanded) {
+            tagContainer.style.maxHeight = '40px';
+            toggleButton.textContent = 'Expand';
+        } else {
+            tagContainer.style.maxHeight = 'none';
+            toggleButton.textContent = 'Collapse';
+        }
+        expanded = !expanded;
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,14 @@
+*.py[cod]
+__pycache__/
+*.so 
+
+venv/
+env/
+*.env
+*.zip
+
+db.sqlite3
+
+*.swp
+*.swo
+migrations/
