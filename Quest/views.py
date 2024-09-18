@@ -2,8 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.core.paginator import Paginator
 from .models import Problem, TestCase, Submission, Tag
 from django.core.serializers import serialize
@@ -26,7 +25,7 @@ def home(request):
 
     if selected_tags:
         for selected_tag in selected_tags:
-            problems = problems.filter(tags__id=selected_tag) # .distinct()
+            problems = problems.filter(tags__id=selected_tag)
 
     paginator = Paginator(problems, 15)
     page_number = request.GET.get('page')
@@ -76,41 +75,32 @@ class Solution:
 @login_required(login_url="/auth/login")
 def problem_by_tag(request, id):
     tag = get_object_or_404(Tag, id=id)
-    problems = Problem.objects.filter(tags=tag)
-    
-    solved_easy = solved_medium = solved_difficult = 0
-    total_easy = total_medium = total_difficult = 0
 
-    for problem in problems:
-        if problem.difficulty == 1:
-            total_easy += 1
-        elif problem.difficulty == 2:
-            total_medium += 1
-        elif problem.difficulty == 3:
-            total_difficult += 1
-        
-        if Submission.objects.filter(problem=problem, correct=True).exists():
-            if problem.difficulty == 1:
-                solved_easy += 1
-            elif problem.difficulty == 2:
-                solved_medium += 1
-            elif problem.difficulty == 3:
-                solved_difficult += 1
+    problems = Problem.objects.filter(tags=tag)
+
+    total_easy = problems.filter(difficulty=1).count()  # Easy
+    total_medium = problems.filter(difficulty=2).count()  # Medium
+    total_hard = problems.filter(difficulty=3).count()  # Hard
+
+    solved_easy = problems.filter(difficulty=1, submissions__user=request.user, submissions__correct=True).distinct().count()
+    solved_medium = problems.filter(difficulty=2, submissions__user=request.user, submissions__correct=True).distinct().count()
+    solved_hard = problems.filter(difficulty=3, submissions__user=request.user, submissions__correct=True).distinct().count()
 
     easy_percentage = (solved_easy / total_easy * 100) if total_easy > 0 else 0
     medium_percentage = (solved_medium / total_medium * 100) if total_medium > 0 else 0
-    difficult_percentage = (solved_difficult / total_difficult * 100) if total_difficult > 0 else 0
+    hard_percentage = (solved_hard / total_hard * 100) if total_hard > 0 else 0
 
-    return render(request, "Quest/tags.html", {
-        "tag": tag,
-        "problems": problems,
-        "solved_easy": solved_easy,
-        "solved_medium": solved_medium,
-        "solved_difficult": solved_difficult,
-        "total_easy": total_easy,
-        "total_medium": total_medium,
-        "total_difficult": total_difficult,
-        "easy_percentage": easy_percentage,
-        "medium_percentage": medium_percentage,
-        "difficult_percentage": difficult_percentage,
-    })
+    context = {
+        'tag': tag,
+        'problems': problems,
+        'solved_easy': solved_easy,
+        'total_easy': total_easy,
+        'easy_percentage': easy_percentage,
+        'solved_medium': solved_medium,
+        'total_medium': total_medium,
+        'medium_percentage': medium_percentage,
+        'solved_hard': solved_hard,
+        'total_hard': total_hard,
+        'hard_percentage': hard_percentage,
+    }
+    return render(request, 'Quest/tags.html', context)

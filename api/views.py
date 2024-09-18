@@ -11,7 +11,6 @@ JUDGE0_API_URL = "https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=fa
 RAPIDAPI_HEADERS = {
     "content-type": "application/json",
     "X-RapidAPI-Key": "cb713ba37cmsh56be9d7d92a3161p167cefjsn100249c5b326",
-    # 0708b497a9mshf29c2496c350e3ap128fe4jsn8a15df99e307 (other API_KEY)
     "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com"
 }
 
