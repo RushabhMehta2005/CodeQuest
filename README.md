@@ -10,18 +10,17 @@
 ## Features
 
 - **Dynamic Problem Dashboard**: Explore and solve a variety of algorithmic problems categorized by difficulty (easy, medium, hard).
-- **Interactive Editor**: Write and test your solutions in an integrated editor environment using [CodeMirror](https://codemirror.net/).
+- **Interactive Code Editor**: Write and test your solutions in an integrated editor environment using [CodeMirror](https://codemirror.net/).
 - **User Profiles**: Track your progress, view solved problems, and analyze your skills in different topics.
 - **Comprehensive Search Functionality**: Find problems quickly with advanced search and filtering options.
 - **Progress Tracking**: Visualize your progress with detailed stats and progress bars for each difficulty level.
-- **Problem Submissions**: Evaluate and run code submissions using [Judge0](https://judge0.com/), an open-source online judge.
+- **Problem Submissions**: Evaluate and run code submissions in < 3 seconds using [Judge0](https://judge0.com/), an open-source online judge.
 
 ## Technologies Used
 
 - **Backend**: Django, Django Rest Framework (DRF)
-- **Frontend**: Tailwind CSS, [CodeMirror](https://codemirror.net/) (for code editor functionality)
+- **Frontend**: HTML,Tailwind CSS and JavaScript
 - **Database**: SQLite
 - **Deployment**: PythonAnywhere [Link](https://rushabh2005.pythonanywhere.com/)
-- **Version Control**: Git
 - **Code Evaluation**: [Judge0](https://judge0.com/) (for running and grading code submissions)
 
